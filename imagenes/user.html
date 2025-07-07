@@ -1,0 +1,76 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Zona del Usuario</title>
+  <link rel="stylesheet" href="stylo.css">
+  
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenido Usuario</h1>
+    <h2>Productos Disponibles</h2>
+    <ul id="listaProductos"></ul>
+
+    <h2>🛒 Tu Carrito</h2>
+    <ul id="carrito"></ul>
+    <p><strong>Total:</strong> $<span id="total">0</span></p>
+  </div>
+
+  <script>
+    let productos = JSON.parse(localStorage.getItem('productos')) || [];
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    const listaProductos = document.getElementById('listaProductos');
+    const carritoLista = document.getElementById('carrito');
+    const totalSpan = document.getElementById('total');
+
+    function mostrarProductos() {
+      listaProductos.innerHTML = '';
+      productos.forEach(prod => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="display: flex; align-items: center;">
+            <img src="${prod.imagen}" alt="${prod.nombre}">
+            <div>
+              <strong>${prod.nombre}</strong> - $${prod.precio}
+            </div>
+          </div>
+          <button onclick="agregarAlCarrito(${prod.id})">Agregar al carrito</button>
+        `;
+        listaProductos.appendChild(li);
+      });
+    }
+
+    function mostrarCarrito() {
+      carritoLista.innerHTML = '';
+      let total = 0;
+      carrito.forEach(item => {
+        total += parseFloat(item.precio);
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${item.nombre}</strong> - $${item.precio}</span>
+          <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+        `;
+        carritoLista.appendChild(li);
+      });
+      totalSpan.textContent = total.toFixed(2);
+    }
+
+    function agregarAlCarrito(id) {
+      const producto = productos.find(p => p.id === id);
+      carrito.push(producto);
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      mostrarCarrito();
+    }
+
+    function eliminarDelCarrito(id) {
+      carrito = carrito.filter(p => p.id !== id);
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      mostrarCarrito();
+    }
+
+    mostrarProductos();
+    mostrarCarrito();
+  </script>
+</body>
+</html>
