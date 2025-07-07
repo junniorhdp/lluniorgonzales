@@ -1,0 +1,67 @@
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+      color: #333;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #FF5A2C;
+    }
+
+    form input {
+      padding: 10px;
+      margin: 10px 5px;
+      width: 30%;
+    }
+
+    form input[type="file"] {
+      width: 95%;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #FF5A2C;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #eee;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    li img {
+      max-width: 100px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+
+    .admin-section {
+      margin-top: 40px;
+    }
+  </style>

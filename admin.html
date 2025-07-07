@@ -1,0 +1,145 @@
+<!-- ESTRUCTURA DE CRUD CENTRAL CON LOCALSTORAGE -->
+<!-- Archivo: admin.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel del Administrador</title>
+  <link rel="stylesheet" href="styleadmin.css">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Panel del Administrador</h1>
+
+    <h2>Gestión de Productos</h2>
+    <form id="productoForm">
+      <input type="text" id="nombre" placeholder="Nombre del producto" required>
+      <input type="text" id="precio" placeholder="Precio" required>
+      <input type="file" id="imagen" accept="image/*" required>
+      <button type="submit">Agregar</button>
+    </form>
+    <ul id="lista"></ul>
+
+    <div class="admin-section">
+      <h2>Gestión de Usuarios</h2>
+      <form id="usuarioForm">
+        <input type="text" id="usuarioNombre" placeholder="Nombre de usuario" required>
+        <input type="text" id="usuarioTipo" placeholder="Tipo (admin, usuario, vendedor)" required>
+        <button type="submit">Agregar Usuario</button>
+      </form>
+      <ul id="listaUsuarios"></ul>
+    </div>
+  </div>
+
+  <script>
+    let productos = JSON.parse(localStorage.getItem('productos')) || [];
+    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+    const productoForm = document.getElementById('productoForm');
+    const usuarioForm = document.getElementById('usuarioForm');
+    const lista = document.getElementById('lista');
+    const listaUsuarios = document.getElementById('listaUsuarios');
+    const imagenInput = document.getElementById('imagen');
+
+    productoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      const precio = document.getElementById('precio').value.trim();
+      const imagenFile = imagenInput.files[0];
+
+      if (!nombre || !precio || !imagenFile) return;
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        const producto = {
+          id: Date.now(),
+          nombre,
+          precio,
+          imagen: reader.result
+        };
+
+        productos.push(producto);
+        localStorage.setItem('productos', JSON.stringify(productos));
+        mostrarProductos();
+        productoForm.reset();
+      };
+      reader.readAsDataURL(imagenFile);
+    });
+
+    usuarioForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('usuarioNombre').value.trim();
+      const tipo = document.getElementById('usuarioTipo').value.trim();
+      if (!nombre || !tipo) return;
+
+      const usuario = { id: Date.now(), nombre, tipo };
+      usuarios.push(usuario);
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      mostrarUsuarios();
+      usuarioForm.reset();
+    });
+
+    function mostrarProductos() {
+      lista.innerHTML = '';
+      productos.forEach(prod => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div style="display: flex; align-items: center;">
+            <img src="${prod.imagen}" alt="${prod.nombre}">
+            <div>
+              <strong>${prod.nombre}</strong> - $${prod.precio}
+            </div>
+          </div>
+          <div>
+            <button onclick="editarProducto(${prod.id})">Editar</button>
+            <button onclick="eliminarProducto(${prod.id})">Eliminar</button>
+          </div>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    function mostrarUsuarios() {
+      listaUsuarios.innerHTML = '';
+      usuarios.forEach(user => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${user.nombre}</strong> - Rol: ${user.tipo}</span>
+          <button onclick="eliminarUsuario(${user.id})">Eliminar</button>
+        `;
+        listaUsuarios.appendChild(li);
+      });
+    }
+
+    function eliminarProducto(id) {
+      productos = productos.filter(p => p.id !== id);
+      localStorage.setItem('productos', JSON.stringify(productos));
+      mostrarProductos();
+    }
+
+    function eliminarUsuario(id) {
+      usuarios = usuarios.filter(u => u.id !== id);
+      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      mostrarUsuarios();
+    }
+
+    function editarProducto(id) {
+      const producto = productos.find(p => p.id === id);
+      const nuevoNombre = prompt("Nuevo nombre:", producto.nombre);
+      const nuevoPrecio = prompt("Nuevo precio:", producto.precio);
+
+      if (nuevoNombre !== null && nuevoPrecio !== null) {
+        producto.nombre = nuevoNombre.trim();
+        producto.precio = nuevoPrecio.trim();
+        localStorage.setItem('productos', JSON.stringify(productos));
+        mostrarProductos();
+      }
+    }
+
+    mostrarProductos();
+    mostrarUsuarios();
+  </script>
+</body>
+</html>
